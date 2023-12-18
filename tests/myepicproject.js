@@ -25,7 +25,7 @@ const main = async() => {
 	
   // Chama add_gif!
     // Você precisará agora passar um link do GIF para a função! Você também precisará passar o usuário que está enviando o GIF!
-    await program.rpc.addGif("flamengo1.gif", {
+    await program.rpc.addGif("https://media.giphy.com/media/QC7rGl1AEoGOXGWHUC/giphy-downsized-large.gif", {
       accounts: {
         baseAccount: baseAccount.publicKey,
         user: provider.wallet.publicKey,
@@ -36,8 +36,17 @@ const main = async() => {
   account = await program.account.baseAccount.fetch(baseAccount.publicKey);
   console.log('👀 GIF Count', account.totalGifs.toString())
 
-    // Acessa o gif_list na conta
-    console.log('👀 GIF List', account.gifList)
+  // Acessa o gif_list na conta
+  console.log('👀 GIF List', account.gifList)
+
+    await program.rpc.voteGif(0, {
+      accounts: {
+        baseAccount: baseAccount.publicKey,
+      },
+    });
+  
+    account = await program.account.baseAccount.fetch(baseAccount.publicKey);
+    console.log("👀 GIF List with Vote", account.gifList);    
 }
 
 const runMain = async () => {

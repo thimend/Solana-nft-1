@@ -8,6 +8,7 @@ pub mod myepicproject {
   pub fn start_stuff_off(ctx: Context<StartStuffOff>) -> Result <()> {
     let base_account = &mut ctx.accounts.base_account;
     base_account.total_gifs = 0;
+
     Ok(())
   }
   
@@ -21,6 +22,7 @@ pub mod myepicproject {
       let item = ItemStruct {
         gif_link: gif_link.to_string(),
         user_address: *user.to_account_info().key,
+        gif_votes: 0,
       };
 
 	  // Adiciona ele ao vetor gif_list.
@@ -29,7 +31,16 @@ pub mod myepicproject {
     base_account.total_gifs += 1;
     Ok(())
   }
+
+  pub fn vote_gif(ctx: Context<VoteGif>, index_gif: u16) -> Result <()> {
+    let base_account = &mut ctx.accounts.base_account;
+    let index: usize = index_gif as usize;
+    base_account.gif_list[index].gif_votes += 1;
+    Ok(())
+  }
 }
+
+
 
 #[derive(Accounts)]
 pub struct StartStuffOff<'info> {
@@ -49,11 +60,18 @@ pub struct AddGif<'info> {
   pub user: Signer<'info>,
 }
 
+#[derive(Accounts)]
+pub struct VoteGif<'info> {
+  #[account(mut)]
+  pub base_account: Account<'info, BaseAccount>,
+}
+
 // Crie uma estrutura personalizada para trabalharmos.
 #[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct ItemStruct {
     pub gif_link: String,
     pub user_address: Pubkey,
+    pub gif_votes: u128,
 }
 
 #[account]
